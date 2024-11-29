@@ -22,8 +22,8 @@ public class ChangeFont : MonoBehaviour
     {
         useFirstFont = !useFirstFont;     // Switch between true and false
 
-        // For Unity UI (legacy) Text components
-        Text[] legacyTextComponents = FindObjectsOfType<Text>();
+        // For Unity UI (legacy) Text components, including inactive objects
+        Text[] legacyTextComponents = FindObjectsOfType<Text>(true);  // true to include inactive objects
         foreach (Text txt in legacyTextComponents)
         {
             txt.font = useFirstFont ? legacyFont1 : legacyFont2;
@@ -32,8 +32,8 @@ public class ChangeFont : MonoBehaviour
             txt.fontSize = useFirstFont ? (int)(txt.fontSize / fontSizeMultiplier) : (int)(txt.fontSize * fontSizeMultiplier);
         }
 
-        // For TextMeshProUGUI components
-        TextMeshProUGUI[] tmpTextComponents = FindObjectsOfType<TextMeshProUGUI>();
+        // For TextMeshProUGUI components, including inactive objects
+        TextMeshProUGUI[] tmpTextComponents = FindObjectsOfType<TextMeshProUGUI>(true); // true to include inactive objects
         foreach (TextMeshProUGUI tmp in tmpTextComponents)
         {
             tmp.font = useFirstFont ? tmpFont1 : tmpFont2;
