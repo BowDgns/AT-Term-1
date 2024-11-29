@@ -14,11 +14,15 @@ public class GameManager : MonoBehaviour
     public Button attack2Button;
 
     public AudioClip enemyDefeatedSound;
-    public AudioClip damageSound;  // New AudioClip for damage sound
+    public AudioClip damageSound;
     public AudioSource audioSource;
 
-    public bool enableShakeEffect = true;   // Toggle for shake effect
-    public bool enableDamageParticles = true; // Toggle for damage particles
+    // Toggles for effects
+    public bool enableShakeEffect = true;
+    public bool enableDamageParticles = true;
+
+    public Toggle shakeEffectToggle; // UI Toggle for shake effect
+    public Toggle damageParticlesToggle; // UI Toggle for damage particles
 
     // Particle effect for when the enemy takes damage
     public GameObject damageEffectPrefab;
@@ -28,6 +32,20 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Initialize shake effect toggle
+        if (shakeEffectToggle != null)
+        {
+            shakeEffectToggle.isOn = enableShakeEffect;
+            shakeEffectToggle.onValueChanged.AddListener(ToggleShakeEffect);
+        }
+
+        // Initialize damage particles toggle
+        if (damageParticlesToggle != null)
+        {
+            damageParticlesToggle.isOn = enableDamageParticles;
+            damageParticlesToggle.onValueChanged.AddListener(ToggleDamageParticles);
+        }
+
         attack1Button.gameObject.SetActive(false);
         attack2Button.gameObject.SetActive(false);
 
@@ -44,6 +62,18 @@ public class GameManager : MonoBehaviour
         }
 
         StartCoroutine(GameLoop());
+    }
+
+    public void ToggleShakeEffect(bool isEnabled)
+    {
+        enableShakeEffect = isEnabled;
+        Debug.Log($"Shake effect enabled: {enableShakeEffect}");
+    }
+
+    public void ToggleDamageParticles(bool isEnabled)
+    {
+        enableDamageParticles = isEnabled;
+        Debug.Log($"Damage particles enabled: {enableDamageParticles}");
     }
 
     private void SpawnNextEnemy()
@@ -140,7 +170,7 @@ public class GameManager : MonoBehaviour
             currentPlayer.Attack2(currentEnemy);
         }
 
-        // Play damage sound if enabled
+        // Play damage sound
         if (audioSource != null && damageSound != null)
         {
             audioSource.PlayOneShot(damageSound);
@@ -153,7 +183,7 @@ public class GameManager : MonoBehaviour
             StartCoroutine(Shake(currentEnemy.transform, 0.2f, 0.15f));
         }
 
-        // Trigger the damage particle effect on the enemy if enabled
+        // Trigger damage particles if enabled
         if (enableDamageParticles && damageEffectPrefab != null)
         {
             InstantiateDamageEffect(currentEnemy.transform.position);
@@ -169,7 +199,7 @@ public class GameManager : MonoBehaviour
         Player targetPlayer = players[Random.Range(0, players.Count)];
         currentEnemy.AttackPlayer(targetPlayer);
 
-        // Play damage sound if enabled
+        // Play damage sound
         if (audioSource != null && damageSound != null)
         {
             audioSource.PlayOneShot(damageSound);
@@ -194,21 +224,25 @@ public class GameManager : MonoBehaviour
 
     private void InstantiateDamageEffect(Vector3 position)
     {
-        // Instantiate the particle effect at the enemy's position
+        if (!enableDamageParticles || damageEffectPrefab == null) return;
+
         GameObject effect = Instantiate(damageEffectPrefab, position, Quaternion.identity);
         ParticleSystem particleSystem = effect.GetComponent<ParticleSystem>();
 
         if (particleSystem != null)
         {
-            // Ensure particles self-destroy after playing
             Destroy(effect, particleSystem.main.duration + particleSystem.main.startLifetime.constantMax);
         }
-
-        Destroy(effect, 0.5f);
+        else
+        {
+            Destroy(effect, 0.5f);
+        }
     }
 
     private IEnumerator Shake(Transform target, float duration, float magnitude)
     {
+        if (!enableShakeEffect) yield break;
+
         Vector3 originalPosition = target.localPosition;
         float elapsed = 0f;
 

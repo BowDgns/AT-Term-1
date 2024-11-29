@@ -15,7 +15,7 @@ public class ChangeFont : MonoBehaviour
 
     void Start()
     {
-        ToggleFonts();
+        //ToggleFonts();
     }
 
     public void ToggleFonts()
