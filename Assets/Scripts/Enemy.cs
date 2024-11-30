@@ -21,5 +21,6 @@ public class Enemy : MonoBehaviour
         int damage = Random.Range(minDamage, maxDamage);
         player.health -= damage;
         Debug.Log($"{enemyName} attacks {player.playerName} for {damage} damage! Player health left: {player.health}");
+        player.UpdateHealth();
     }
 }

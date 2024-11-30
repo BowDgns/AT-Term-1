@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class GameManager : MonoBehaviour
     public AudioClip enemyDefeatedSound;
     public AudioClip damageSound;
     public AudioSource audioSource;
+    public TMP_Text enemyName; // Text field for enemy name
+    public TMP_Text enemyHealth; // Text field for enemy health
 
     // Toggles for effects
     public bool enableShakeEffect = true;
@@ -30,8 +33,15 @@ public class GameManager : MonoBehaviour
     private int currentPlayerIndex = 0;
     private bool chosenAttack = false;
 
+    private List<Enemy> originalEnemies; // Stores the initial list of enemies
+    private List<Player> originalPlayers; // Stores the initial list of players
+
     private void Start()
     {
+        // Store original states of players and enemies
+        originalEnemies = new List<Enemy>(enemies);
+        originalPlayers = new List<Player>(players);
+
         // Initialize shake effect toggle
         if (shakeEffectToggle != null)
         {
@@ -84,11 +94,28 @@ public class GameManager : MonoBehaviour
             enemies.RemoveAt(0);
 
             Debug.Log($"A new enemy has appeared: {currentEnemy.enemyName}");
+
+            // Update UI with enemy name and health
+            UpdateEnemyUI();
         }
         else
         {
             Debug.Log("All enemies defeated! Players win!");
-            StopAllCoroutines();
+            EndGame();
+        }
+    }
+
+    private void UpdateEnemyUI()
+    {
+        if (currentEnemy != null)
+        {
+            enemyName.text = currentEnemy.enemyName;
+            enemyHealth.text = $"{currentEnemy.health}";
+        }
+        else
+        {
+            enemyName.text = "No Enemy";
+            enemyHealth.text = "Health: 0/0";
         }
     }
 
@@ -118,6 +145,7 @@ public class GameManager : MonoBehaviour
                     if (currentEnemy == null)
                     {
                         Debug.Log("Players win!");
+                        EndGame();
                         yield break;
                     }
                 }
@@ -130,6 +158,7 @@ public class GameManager : MonoBehaviour
                 if (players.Count == 0)
                 {
                     Debug.Log("Enemy wins!");
+                    EndGame();
                     yield break;
                 }
             }
@@ -188,6 +217,9 @@ public class GameManager : MonoBehaviour
         {
             InstantiateDamageEffect(currentEnemy.transform.position);
         }
+
+        // Update enemy health UI
+        UpdateEnemyUI();
 
         chosenAttack = true;
     }
@@ -257,5 +289,32 @@ public class GameManager : MonoBehaviour
         }
 
         target.localPosition = originalPosition;
+    }
+
+    private void EndGame()
+    {
+        Debug.Log("Game Over! Resetting game...");
+        StartCoroutine(ResetGame());
+    }
+
+    private IEnumerator ResetGame()
+    {
+        yield return new WaitForSeconds(3); // Optional delay before resetting
+
+        // Reset players and enemies
+        players = new List<Player>(originalPlayers);
+        enemies = new List<Enemy>(originalEnemies);
+
+        foreach (Player player in players)
+        {
+            player.ResetHealth(); // Ensure this method resets player health
+        }
+
+        currentEnemy = null;
+        currentPlayerIndex = 0;
+
+        // Restart game loop
+        SpawnNextEnemy();
+        StartCoroutine(GameLoop());
     }
 }

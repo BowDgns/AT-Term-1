@@ -1,9 +1,11 @@
 using UnityEngine;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
     public string playerName;
     public int health = 100;
+    public TMP_Text healthText;
 
     public void Attack1(Enemy enemy)
     {
@@ -17,5 +19,15 @@ public class Player : MonoBehaviour
         int damage = 20;
         Debug.Log($"{playerName} used Attack2 on {enemy.name} for {damage} damage!");
         enemy.TakeDamage(damage);
+    }
+
+    public void ResetHealth()
+    {
+        health = 100;
+    }
+
+    public void UpdateHealth()
+    {
+        healthText.text = $"{health}";
     }
 }
