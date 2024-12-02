@@ -4,71 +4,53 @@ using System.Collections.Generic;
 
 public class HighlightToggleWithUI : MonoBehaviour
 {
-    // Reference to the UI Toggle
-    public Toggle highlightToggle;
-
-    // List to store references to all objects tagged "highlight"
-    private List<GameObject> highlightObjects;
+    public Toggle highlight_toggle;
+    private List<GameObject> highlight_tags;
 
     void Start()
     {
-        // Initialize the list
-        highlightObjects = new List<GameObject>();
+        highlight_tags = new List<GameObject>();
 
-        // Find all objects, including inactive ones, using a custom method
-        FindAllObjectsWithTag("highlight");
+        FindAllObjectsWithTag("highlight");     // select everything tagged with highlight (canvas panels)
 
-        if (highlightToggle != null)
+        if (highlight_toggle != null)
         {
-            // Initialize objects to match the toggle's current state
-            UpdateHighlightObjects(highlightToggle.isOn);
-
-            // Add a listener to respond to the toggle's state changes
-            highlightToggle.onValueChanged.AddListener(OnToggleValueChanged);
-        }
-        else
-        {
-            Debug.LogError("Highlight Toggle is not assigned in the Inspector!");
+            UpdateHighlightObjects(highlight_toggle.isOn);
+            highlight_toggle.onValueChanged.AddListener(OnToggleValueChanged);
         }
     }
-
-    // Custom method to find all objects with the specified tag, including inactive ones
     void FindAllObjectsWithTag(string tag)
     {
         GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-        foreach (GameObject obj in allObjects)
+        foreach (GameObject obj in allObjects)      // add inactive objects with the highlight tag (by default they are all toggled of)
         {
-            if (obj.CompareTag(tag) && !highlightObjects.Contains(obj))
+            if (obj.CompareTag(tag) && !highlight_tags.Contains(obj))
             {
-                highlightObjects.Add(obj);
+                highlight_tags.Add(obj);
             }
         }
     }
-
-    // Called whenever the toggle value changes
     void OnToggleValueChanged(bool isOn)
     {
         UpdateHighlightObjects(isOn);
     }
 
-    // Update the active state of all objects
     void UpdateHighlightObjects(bool isActive)
     {
-        foreach (GameObject obj in highlightObjects)
+        foreach (GameObject obj in highlight_tags)
         {
             if (obj != null)
             {
-                obj.SetActive(isActive);
+                obj.SetActive(isActive);    // set hihglight to be on or off
             }
         }
     }
 
     void OnDestroy()
     {
-        // Remove the listener to avoid potential memory leaks
-        if (highlightToggle != null)
+        if (highlight_toggle != null)
         {
-            highlightToggle.onValueChanged.RemoveListener(OnToggleValueChanged);
+            highlight_toggle.onValueChanged.RemoveListener(OnToggleValueChanged);
         }
     }
 }
