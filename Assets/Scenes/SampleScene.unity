@@ -6334,10 +6334,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd87f77967c0f084e912c7b0320e455e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  legacyFont1: {fileID: 12800000, guid: a1012f1f31eeb274c8eead0ff491e822, type: 3}
-  legacyFont2: {fileID: 12800000, guid: 0fac182f5d766104fb2edf6edb3fa0ef, type: 3}
-  tmpFont1: {fileID: 11400000, guid: a43933dd5fafab64398429e635ff1e5f, type: 2}
-  tmpFont2: {fileID: 11400000, guid: ac1321d7ef84c7340a84cdc040101b41, type: 2}
+  font_1: {fileID: 11400000, guid: a43933dd5fafab64398429e635ff1e5f, type: 2}
+  font_2: {fileID: 11400000, guid: ac1321d7ef84c7340a84cdc040101b41, type: 2}
   useFirstFont: 1
   fontSizeMultiplier: 0.6
 --- !u!4 &289075356
@@ -6810,7 +6808,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d19ee01b09390bc47808b9a7fc499787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  highlightToggle: {fileID: 1486088995}
+  highlight_toggle: {fileID: 0}
 --- !u!1 &362639933
 GameObject:
   m_ObjectHideFlags: 0
@@ -10482,18 +10480,9 @@ MonoBehaviour:
   - {fileID: 1788881199}
   - {fileID: 2034119259}
   - {fileID: 1344321295}
-  buttonPhrases:
-  - start
-  - settings
-  - attack
-  - special
-  - exit
-  - back
-  - volume
-  - controls
-  - video
+  button_words: []
   toggles: []
-  togglePhrases: []
+  toggle_words: []
   sfxSlider: {fileID: 2105090427}
   musicSlider: {fileID: 641547389}
   sfxAudio: {fileID: 2140501507}
@@ -12016,10 +12005,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe817a85bd077174ea0b8f99aa006094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primaryObject: {fileID: 1540657146}
-  secondaryObject: {fileID: 1005049231}
-  toggleButton: {fileID: 1354163036}
-  backButton: {fileID: 0}
+  next_gameobject: {fileID: 1540657146}
+  current_gameobject: {fileID: 1005049231}
+  toggle_button: {fileID: 1354163036}
+  back_button: {fileID: 0}
 --- !u!4 &1566322652
 Transform:
   m_ObjectHideFlags: 0
@@ -12047,10 +12036,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe817a85bd077174ea0b8f99aa006094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primaryObject: {fileID: 1683932630}
-  secondaryObject: {fileID: 1005049231}
-  toggleButton: {fileID: 196025313}
-  backButton: {fileID: 0}
+  next_gameobject: {fileID: 1683932630}
+  current_gameobject: {fileID: 1005049231}
+  toggle_button: {fileID: 196025313}
+  back_button: {fileID: 0}
 --- !u!114 &1566322654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12063,10 +12052,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe817a85bd077174ea0b8f99aa006094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primaryObject: {fileID: 1510053726}
-  secondaryObject: {fileID: 419136028}
-  toggleButton: {fileID: 1344321295}
-  backButton: {fileID: 9020457}
+  next_gameobject: {fileID: 2087345337}
+  current_gameobject: {fileID: 419136028}
+  toggle_button: {fileID: 2034119259}
+  back_button: {fileID: 9020457}
 --- !u!114 &1566322655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12079,10 +12068,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe817a85bd077174ea0b8f99aa006094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primaryObject: {fileID: 1043554361}
-  secondaryObject: {fileID: 419136028}
-  toggleButton: {fileID: 1788881199}
-  backButton: {fileID: 9020457}
+  next_gameobject: {fileID: 1005049231}
+  current_gameobject: {fileID: 1683932630}
+  toggle_button: {fileID: 2109287382}
+  back_button: {fileID: 0}
 --- !u!114 &1566322656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12095,10 +12084,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe817a85bd077174ea0b8f99aa006094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primaryObject: {fileID: 2087345337}
-  secondaryObject: {fileID: 419136028}
-  toggleButton: {fileID: 2034119259}
-  backButton: {fileID: 9020457}
+  next_gameobject: {fileID: 1043554361}
+  current_gameobject: {fileID: 419136028}
+  toggle_button: {fileID: 1788881199}
+  back_button: {fileID: 9020457}
 --- !u!114 &1566322657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12111,10 +12100,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe817a85bd077174ea0b8f99aa006094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primaryObject: {fileID: 1005049231}
-  secondaryObject: {fileID: 1683932630}
-  toggleButton: {fileID: 2109287382}
-  backButton: {fileID: 0}
+  next_gameobject: {fileID: 1510053726}
+  current_gameobject: {fileID: 419136028}
+  toggle_button: {fileID: 1344321295}
+  back_button: {fileID: 9020457}
 --- !u!114 &1566322658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12127,10 +12116,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe817a85bd077174ea0b8f99aa006094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primaryObject: {fileID: 1683932630}
-  secondaryObject: {fileID: 1540657146}
-  toggleButton: {fileID: 1973509923}
-  backButton: {fileID: 0}
+  next_gameobject: {fileID: 1540657146}
+  current_gameobject: {fileID: 1683932630}
+  toggle_button: {fileID: 636621126}
+  back_button: {fileID: 0}
 --- !u!114 &1566322659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12143,10 +12132,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe817a85bd077174ea0b8f99aa006094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primaryObject: {fileID: 1540657146}
-  secondaryObject: {fileID: 1683932630}
-  toggleButton: {fileID: 636621126}
-  backButton: {fileID: 0}
+  next_gameobject: {fileID: 1683932630}
+  current_gameobject: {fileID: 1540657146}
+  toggle_button: {fileID: 1973509923}
+  back_button: {fileID: 0}
 --- !u!1 &1574162355
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,11 +6,15 @@ using System.Linq; // For LINQ methods like ToArray
 
 public class MultiButtonToggleVoiceControl : MonoBehaviour
 {
-    public List<Button> buttons;  // List for buttons
-    public List<string> buttonPhrases;  // Phrases for button actions
+    public List<Button> buttons;  
+    public List<string> button_words;   // list of buttons and corresponding words to activate buttons
 
-    public List<Toggle> toggles;  // List for toggles
-    public List<string> togglePhrases;  // Phrases for toggle actions
+    public List<Toggle> toggles;  
+    public List<string> toggle_words;  // same lists but for toggles
+
+    private KeywordRecognizer keyword_recognizer;
+    private Dictionary<string, Button> button_dictionary;
+    private Dictionary<string, Toggle> toggle_dictionary;
 
     // Volume control sliders and audio sources
     public Slider sfxSlider;        // Slider for SFX volume
@@ -18,30 +22,18 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
     public AudioSource sfxAudio;    // AudioSource for SFX
     public AudioSource musicAudio;  // AudioSource for Music
 
-    private KeywordRecognizer keywordRecognizer;
-    private Dictionary<string, Button> buttonCommands;
-    private Dictionary<string, Toggle> toggleCommands;
-
     void Start()
     {
-        // Ensure the phrases and UI elements match in count
-        if (buttons.Count != buttonPhrases.Count || toggles.Count != togglePhrases.Count)
+        button_dictionary = new Dictionary<string, Button>();   // dictionary with the word and the button it is linked to
+        for (int i = 0; i < button_words.Count; i++)
         {
-            Debug.LogError("The number of UI elements and phrases must match!");
-            return;
+            button_dictionary[button_words[i]] = buttons[i];
         }
 
-        // Step 1: Populate dictionaries with phrases and their associated buttons and toggles
-        buttonCommands = new Dictionary<string, Button>();
-        for (int i = 0; i < buttonPhrases.Count; i++)
+        toggle_dictionary = new Dictionary<string, Toggle>();
+        for (int i = 0; i < toggle_words.Count; i++)
         {
-            buttonCommands[buttonPhrases[i]] = buttons[i];
-        }
-
-        toggleCommands = new Dictionary<string, Toggle>();
-        for (int i = 0; i < togglePhrases.Count; i++)
-        {
-            toggleCommands[togglePhrases[i]] = toggles[i];
+            toggle_dictionary[toggle_words[i]] = toggles[i];
         }
 
         // Step 2: Add volume control phrases
@@ -54,30 +46,28 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
         };
 
         // Combine button, toggle, and volume control phrases
-        var allPhrases = buttonPhrases.Concat(togglePhrases).Concat(volumeControlPhrases).ToArray();
-        keywordRecognizer = new KeywordRecognizer(allPhrases);
-        keywordRecognizer.OnPhraseRecognized += OnPhraseRecognized;
+        var allPhrases = button_words.Concat(toggle_words).Concat(volumeControlPhrases).ToArray();
+        keyword_recognizer = new KeywordRecognizer(allPhrases);
+        keyword_recognizer.OnPhraseRecognized += OnPhraseRecognized;
 
         // Step 3: Start the recognizer
-        keywordRecognizer.Start();
-        Debug.Log("Keyword Recognizer started. Say a command to trigger buttons, toggles, or volume control.");
+        keyword_recognizer.Start();
     }
 
     private void OnPhraseRecognized(PhraseRecognizedEventArgs args)
     {
         Debug.Log($"Recognized phrase: {args.text}");
 
-        // Step 4: Handle button commands
-        if (buttonCommands.TryGetValue(args.text, out Button button))
+        // button click if voice input matches a phrase in the list
+        if (button_dictionary.TryGetValue(args.text, out Button button))
         {
-            Debug.Log($"Triggering button: {button.name}");
-            button.onClick.Invoke(); // Trigger the button's onClick event
+            button.onClick.Invoke(); 
         }
-        // Step 5: Handle toggle commands
-        else if (toggleCommands.TryGetValue(args.text, out Toggle toggle))
+        // activate or deactivate toggle if voice input matches
+        else if (toggle_dictionary.TryGetValue(args.text, out Toggle toggle))
         {
             Debug.Log($"Toggling state of: {toggle.name}");
-            toggle.isOn = !toggle.isOn; // Toggle the state of the toggle
+            toggle.isOn = !toggle.isOn;
         }
         // Step 6: Handle volume control commands
         else if (args.text.Contains("set sound volume to"))
@@ -142,10 +132,10 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
     // Clean up the recognizer when the object is destroyed
     void OnDestroy()
     {
-        if (keywordRecognizer != null && keywordRecognizer.IsRunning)
+        if (keyword_recognizer != null && keyword_recognizer.IsRunning)
         {
-            keywordRecognizer.Stop();
-            keywordRecognizer.Dispose();
+            keyword_recognizer.Stop();
+            keyword_recognizer.Dispose();
         }
     }
 }
