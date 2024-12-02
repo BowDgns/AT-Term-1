@@ -6,39 +6,19 @@ using UnityEngine.UI;
 
 public class ChangeFont : MonoBehaviour
 {
-    public Font legacyFont1;              // Font for Unity UI Text
-    public Font legacyFont2;              // Alternative Font for Unity UI Text
-    public TMP_FontAsset tmpFont1;        // Font for TextMeshProUGUI
-    public TMP_FontAsset tmpFont2;        // Alternative Font for TextMeshProUGUI
-    public bool useFirstFont = true;      // Toggle to determine which font to use
-    public float fontSizeMultiplier = 0.8f; // Multiplier to reduce the size of font2
-
-    void Start()
-    {
-        //ToggleFonts();
-    }
+    public TMP_FontAsset font_1;        
+    public TMP_FontAsset font_2;        
+    public bool useFirstFont = true;     
+    public float fontSizeMultiplier = 0.8f;
 
     public void ToggleFonts()
     {
-        useFirstFont = !useFirstFont;     // Switch between true and false
+        useFirstFont = !useFirstFont;     // switch between true and false when toggled
 
-        // For Unity UI (legacy) Text components, including inactive objects
-        Text[] legacyTextComponents = FindObjectsOfType<Text>(true);  // true to include inactive objects
-        foreach (Text txt in legacyTextComponents)
-        {
-            txt.font = useFirstFont ? legacyFont1 : legacyFont2;
-
-            // Adjust font size based on which font is active, casting to int
-            txt.fontSize = useFirstFont ? (int)(txt.fontSize / fontSizeMultiplier) : (int)(txt.fontSize * fontSizeMultiplier);
-        }
-
-        // For TextMeshProUGUI components, including inactive objects
-        TextMeshProUGUI[] tmpTextComponents = FindObjectsOfType<TextMeshProUGUI>(true); // true to include inactive objects
+        TextMeshProUGUI[] tmpTextComponents = FindObjectsOfType<TextMeshProUGUI>(true); // find all active and inactive objects
         foreach (TextMeshProUGUI tmp in tmpTextComponents)
         {
-            tmp.font = useFirstFont ? tmpFont1 : tmpFont2;
-
-            // Adjust font size based on which font is active
+            tmp.font = useFirstFont ? font_1 : font_2;
             tmp.fontSize = useFirstFont ? tmp.fontSize / fontSizeMultiplier : tmp.fontSize * fontSizeMultiplier;
         }
     }
