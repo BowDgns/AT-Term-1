@@ -79,7 +79,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            Destroy(effect, 0.5f);
+            Destroy(effect, 0.05f);
         }
     }
 

@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     private List<Enemy> original_enemies; 
     private List<Player> original_players;
 
+    public GameObject enemy_highlight;
+
     void Awake()
     {
         UI = GetComponent<UIManager>();     // get the UI manager for references
@@ -135,6 +137,7 @@ public class GameManager : MonoBehaviour
     // logic for looping through player turn
     private IEnumerator PlayerTurn(Player player)
     {
+        player.player_highlight.SetActive(true);
         Debug.Log($"{player.player_name}'s turn!");
 
         attack_button.gameObject.SetActive(true);
@@ -151,7 +154,8 @@ public class GameManager : MonoBehaviour
         special_button.gameObject.SetActive(false);
 
         Debug.Log($"{player.player_name}'s turn ended.");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
+        player.player_highlight.SetActive(false);
     }
 
     // logic for player attack
@@ -192,6 +196,7 @@ public class GameManager : MonoBehaviour
     // logic for enemy turn and attack
     private IEnumerator EnemyTurn()
     {
+        enemy_highlight.SetActive(true);
         Debug.Log($"{current_enemy.enemy_name}'s turn!");
 
         Player targetPlayer = players[Random.Range(0, players.Count)];
@@ -216,7 +221,8 @@ public class GameManager : MonoBehaviour
         }
 
         Debug.Log($"{current_enemy.enemy_name}'s turn ended.");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
+        enemy_highlight.SetActive(false);
     }
 
 
@@ -225,7 +231,6 @@ public class GameManager : MonoBehaviour
     {
         UI.win_screen.gameObject.SetActive(true);
         UI.game_ui.gameObject.SetActive(false);
-        //StartCoroutine(ResetGame());
     }
 
     private IEnumerator ResetGame()

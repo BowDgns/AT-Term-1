@@ -2,29 +2,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
 using System.Collections.Generic;
-using System.Linq; // For LINQ methods like ToArray
+using System.Linq;
 
 public class MultiButtonToggleVoiceControl : MonoBehaviour
 {
-    public List<Button> buttons;  
-    public List<string> button_words;   // list of buttons and corresponding words to activate buttons
+    public Toggle voice_toggle;
 
-    public List<Toggle> toggles;  
-    public List<string> toggle_words;  // same lists but for toggles
+    public List<Button> buttons;
+    public List<string> button_words;
+
+    public List<Toggle> toggles;
+    public List<string> toggle_words;
 
     private KeywordRecognizer keyword_recognizer;
     private Dictionary<string, Button> button_dictionary;
     private Dictionary<string, Toggle> toggle_dictionary;
 
-    // Volume control sliders and audio sources
-    public Slider sfxSlider;        // Slider for SFX volume
-    public Slider musicSlider;      // Slider for Music volume
-    public AudioSource sfxAudio;    // AudioSource for SFX
-    public AudioSource musicAudio;  // AudioSource for Music
+    public Slider sfxSlider;
+    public Slider musicSlider;
+    public AudioSource sfxAudio;
+    public AudioSource musicAudio;
 
     void Start()
     {
-        button_dictionary = new Dictionary<string, Button>();   // dictionary with the word and the button it is linked to
+        button_dictionary = new Dictionary<string, Button>();
         for (int i = 0; i < button_words.Count; i++)
         {
             button_dictionary[button_words[i]] = buttons[i];
@@ -36,7 +37,6 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
             toggle_dictionary[toggle_words[i]] = toggles[i];
         }
 
-        // Step 2: Add volume control phrases
         var volumeControlPhrases = new List<string>
         {
             "set sfx volume to",
@@ -45,32 +45,57 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
             "set volume to one hundred"
         };
 
-        // Combine button, toggle, and volume control phrases
         var allPhrases = button_words.Concat(toggle_words).Concat(volumeControlPhrases).ToArray();
         keyword_recognizer = new KeywordRecognizer(allPhrases);
         keyword_recognizer.OnPhraseRecognized += OnPhraseRecognized;
 
-        // Step 3: Start the recognizer
-        keyword_recognizer.Start();
+        // Subscribe to the toggle's state change event
+        if (voice_toggle != null)
+        {
+            voice_toggle.onValueChanged.AddListener(OnVoiceControlToggleChanged);
+        }
+
+        // Initialize based on toggle's starting state
+        if (voice_toggle != null && voice_toggle.isOn)
+        {
+            keyword_recognizer.Start();
+        }
+    }
+
+    private void OnVoiceControlToggleChanged(bool isOn)
+    {
+        if (isOn)
+        {
+            Debug.Log("Voice control enabled");
+            if (!keyword_recognizer.IsRunning)
+            {
+                keyword_recognizer.Start();
+            }
+        }
+        else
+        {
+            Debug.Log("Voice control disabled");
+            if (keyword_recognizer.IsRunning)
+            {
+                keyword_recognizer.Stop();
+            }
+        }
     }
 
     private void OnPhraseRecognized(PhraseRecognizedEventArgs args)
     {
         Debug.Log($"Recognized phrase: {args.text}");
 
-        // button click if voice input matches a phrase in the list
         if (button_dictionary.TryGetValue(args.text, out Button button))
         {
-            button.onClick.Invoke(); 
+            button.onClick.Invoke();
         }
-        // activate or deactivate toggle if voice input matches
         else if (toggle_dictionary.TryGetValue(args.text, out Toggle toggle))
         {
             Debug.Log($"Toggling state of: {toggle.name}");
             toggle.isOn = !toggle.isOn;
         }
-        // Step 6: Handle volume control commands
-        else if (args.text.Contains("set sound volume to"))
+        else if (args.text.Contains("set sfx volume to"))
         {
             int volume = ExtractVolume(args.text);
             SetSFXVolume(volume);
@@ -82,12 +107,12 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
         }
         else if (args.text.Contains("set volume to zero"))
         {
-            SetSFXVolume(0); // Set both volumes to 0%
+            SetSFXVolume(0);
             SetMusicVolume(0);
         }
         else if (args.text.Contains("set volume to one hundred"))
         {
-            SetSFXVolume(100); // Set both volumes to 100%
+            SetSFXVolume(100);
             SetMusicVolume(100);
         }
         else
@@ -96,46 +121,52 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
         }
     }
 
-    // Extract the volume percentage from the recognized command
     private int ExtractVolume(string command)
     {
         string[] words = command.Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
         int volume = 0;
 
-        // Try to parse the last word of the command as a volume percentage
         if (words.Length >= 4 && int.TryParse(words[words.Length - 1], out volume))
         {
-            return Mathf.Clamp(volume, 0, 100);  // Ensure volume is between 0 and 100
+            return Mathf.Clamp(volume, 0, 100);
         }
 
-        return 50;  // Default to 50% if parsing fails
+        return 50;
     }
 
-    // Method to set the SFX volume
     private void SetSFXVolume(int percentage)
     {
         float volumeValue = Mathf.Clamp(percentage / 100f, 0f, 1f);
-        sfxSlider.value = volumeValue; // Update SFX slider
-        sfxAudio.volume = volumeValue; // Set SFX AudioSource volume
+        sfxSlider.value = volumeValue;
+        sfxAudio.volume = volumeValue;
         Debug.Log($"SFX volume set to {percentage}%");
     }
 
-    // Method to set the Music volume
     private void SetMusicVolume(int percentage)
     {
         float volumeValue = Mathf.Clamp(percentage / 100f, 0f, 1f);
-        musicSlider.value = volumeValue; // Update Music slider
-        musicAudio.volume = volumeValue; // Set Music AudioSource volume
+        musicSlider.value = volumeValue;
+        musicAudio.volume = volumeValue;
         Debug.Log($"Music volume set to {percentage}%");
     }
 
-    // Clean up the recognizer when the object is destroyed
     void OnDestroy()
     {
-        if (keyword_recognizer != null && keyword_recognizer.IsRunning)
+        if (keyword_recognizer != null)
         {
-            keyword_recognizer.Stop();
+            keyword_recognizer.OnPhraseRecognized -= OnPhraseRecognized;
+
+            if (keyword_recognizer.IsRunning)
+            {
+                keyword_recognizer.Stop();
+            }
+
             keyword_recognizer.Dispose();
+        }
+
+        if (voice_toggle != null)
+        {
+            voice_toggle.onValueChanged.RemoveListener(OnVoiceControlToggleChanged);
         }
     }
 }

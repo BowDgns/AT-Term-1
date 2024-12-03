@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     public int min_damage = 10;
     public int max_damage = 20;
 
+    public GameObject player_highlight;
+
     public void Attack1(Enemy enemy)
     {
         int damage = Random.Range(min_damage, max_damage +1);
