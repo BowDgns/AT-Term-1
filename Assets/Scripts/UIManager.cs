@@ -16,6 +16,10 @@ public class UIManager : MonoBehaviour
 
     public GameObject damage_effect;
 
+    public GameObject win_screen;
+    public GameObject game_ui;
+    public GameObject title_screen;
+
     // Start is called before the first frame update
     void Start()
     {

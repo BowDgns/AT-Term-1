@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     private bool attacked = false;
 
     private List<Enemy> original_enemies; 
-    private List<Player> original_players; 
+    private List<Player> original_players;
 
     void Awake()
     {
@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviour
     {
         if (current_enemy != null)
         {
-            UI.enemy_name.text = current_enemy.enemyName;
+            UI.enemy_name.text = current_enemy.enemy_name;
             UI.enemy_health.text = $"{current_enemy.health}";
         }
         else
@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
 
                 if (current_enemy.health <= 0)
                 {
-                    Debug.Log($"{current_enemy.enemyName} has been defeated!");
+                    Debug.Log($"{current_enemy.enemy_name} has been defeated!");
 
                     if (audioSource != null && enemyDefeatedSound != null)
                     {
@@ -192,7 +192,7 @@ public class GameManager : MonoBehaviour
     // logic for enemy turn and attack
     private IEnumerator EnemyTurn()
     {
-        Debug.Log($"{current_enemy.enemyName}'s turn!");
+        Debug.Log($"{current_enemy.enemy_name}'s turn!");
 
         Player targetPlayer = players[Random.Range(0, players.Count)];
         current_enemy.AttackPlayer(targetPlayer);
@@ -203,7 +203,6 @@ public class GameManager : MonoBehaviour
             audioSource.PlayOneShot(damageSound);
         }
 
-        // Trigger shake effect if enabled
         if (UI.enable_shake)
         {
             StartCoroutine(UI.Shake(current_enemy.transform, 0.15f, 0.1f));
@@ -216,7 +215,7 @@ public class GameManager : MonoBehaviour
             players.Remove(targetPlayer);
         }
 
-        Debug.Log($"{current_enemy.enemyName}'s turn ended.");
+        Debug.Log($"{current_enemy.enemy_name}'s turn ended.");
         yield return new WaitForSeconds(1);
     }
 
@@ -224,21 +223,25 @@ public class GameManager : MonoBehaviour
     // logic for ending and resetting the game
     private void EndGame()
     {
-        Debug.Log("Game Over! Resetting game...");
-        StartCoroutine(ResetGame());
+        UI.win_screen.gameObject.SetActive(true);
+        UI.game_ui.gameObject.SetActive(false);
+        //StartCoroutine(ResetGame());
     }
 
     private IEnumerator ResetGame()
     {
-        yield return new WaitForSeconds(3); // Optional delay before resetting
+        UI.win_screen.gameObject.SetActive(false);
+        UI.title_screen.gameObject.SetActive(true);
 
-        // Reset players and enemies
+        yield return new WaitForSeconds(1); // reset delay 
+
+        // reset the players and enemys
         players = new List<Player>(original_players);
         enemies = new List<Enemy>(original_enemies);
 
         foreach (Player player in players)
         {
-            player.ResetHealth(); // Ensure this method resets player health
+            player.ResetHealth(); 
         }
 
         current_enemy = null;
@@ -246,5 +249,10 @@ public class GameManager : MonoBehaviour
 
         SpawnNextEnemy();
         StartCoroutine(GameLoop());
+    }
+
+    public void TitleButton()
+    {
+        StartCoroutine(ResetGame());
     }
 }
