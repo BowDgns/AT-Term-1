@@ -20,7 +20,7 @@ public class Enemy : MonoBehaviour
         // Use the minDamage and maxDamage range for the attack
         int damage = Random.Range(minDamage, maxDamage);
         player.health -= damage;
-        Debug.Log($"{enemyName} attacks {player.playerName} for {damage} damage! Player health left: {player.health}");
+        Debug.Log($"{enemyName} attacks {player.player_name} for {damage} damage! Player health left: {player.health}");
         player.UpdateHealth();
     }
 }

@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using JetBrains.Annotations;
 
 public class GameManager : MonoBehaviour
 {
+    public UIManager UI;
+
     public List<Player> players;
     public List<Enemy> enemies;
     public GameObject enemySpawnPoint;
@@ -17,18 +20,6 @@ public class GameManager : MonoBehaviour
     public AudioClip enemyDefeatedSound;
     public AudioClip damageSound;
     public AudioSource audioSource;
-    public TMP_Text enemyName; // Text field for enemy name
-    public TMP_Text enemyHealth; // Text field for enemy health
-
-    // Toggles for effects
-    public bool enableShakeEffect = true;
-    public bool enableDamageParticles = true;
-
-    public Toggle shakeEffectToggle; // UI Toggle for shake effect
-    public Toggle damageParticlesToggle; // UI Toggle for damage particles
-
-    // Particle effect for when the enemy takes damage
-    public GameObject damageEffectPrefab;
 
     private int currentPlayerIndex = 0;
     private bool chosenAttack = false;
@@ -36,25 +27,15 @@ public class GameManager : MonoBehaviour
     private List<Enemy> originalEnemies; // Stores the initial list of enemies
     private List<Player> originalPlayers; // Stores the initial list of players
 
+    void Awake()
+    {
+        UI = GetComponent<UIManager>();     // get the UI manager for references
+    }
     private void Start()
     {
         // Store original states of players and enemies
         originalEnemies = new List<Enemy>(enemies);
         originalPlayers = new List<Player>(players);
-
-        // Initialize shake effect toggle
-        if (shakeEffectToggle != null)
-        {
-            shakeEffectToggle.isOn = enableShakeEffect;
-            shakeEffectToggle.onValueChanged.AddListener(ToggleShakeEffect);
-        }
-
-        // Initialize damage particles toggle
-        if (damageParticlesToggle != null)
-        {
-            damageParticlesToggle.isOn = enableDamageParticles;
-            damageParticlesToggle.onValueChanged.AddListener(ToggleDamageParticles);
-        }
 
         attack1Button.gameObject.SetActive(false);
         attack2Button.gameObject.SetActive(false);
@@ -72,18 +53,6 @@ public class GameManager : MonoBehaviour
         }
 
         StartCoroutine(GameLoop());
-    }
-
-    public void ToggleShakeEffect(bool isEnabled)
-    {
-        enableShakeEffect = isEnabled;
-        Debug.Log($"Shake effect enabled: {enableShakeEffect}");
-    }
-
-    public void ToggleDamageParticles(bool isEnabled)
-    {
-        enableDamageParticles = isEnabled;
-        Debug.Log($"Damage particles enabled: {enableDamageParticles}");
     }
 
     private void SpawnNextEnemy()
@@ -109,13 +78,13 @@ public class GameManager : MonoBehaviour
     {
         if (currentEnemy != null)
         {
-            enemyName.text = currentEnemy.enemyName;
-            enemyHealth.text = $"{currentEnemy.health}";
+            UI.enemy_name.text = currentEnemy.enemyName;
+            UI.enemy_health.text = $"{currentEnemy.health}";
         }
         else
         {
-            enemyName.text = "No Enemy";
-            enemyHealth.text = "Health: 0/0";
+            UI.enemy_name.text = "none";
+            UI.enemy_health.text = "0";
         }
     }
 
@@ -165,9 +134,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // logic for looping through player turn
     private IEnumerator PlayerTurn(Player player)
     {
-        Debug.Log($"{player.playerName}'s turn!");
+        Debug.Log($"{player.player_name}'s turn!");
 
         attack1Button.gameObject.SetActive(true);
         attack2Button.gameObject.SetActive(true);
@@ -182,10 +152,11 @@ public class GameManager : MonoBehaviour
         attack1Button.gameObject.SetActive(false);
         attack2Button.gameObject.SetActive(false);
 
-        Debug.Log($"{player.playerName}'s turn ended.");
+        Debug.Log($"{player.player_name}'s turn ended.");
         yield return new WaitForSeconds(1);
     }
 
+    // logic for player attack
     private void PlayerAttack(int attackType)
     {
         Player currentPlayer = players[currentPlayerIndex];
@@ -199,31 +170,28 @@ public class GameManager : MonoBehaviour
             currentPlayer.Attack2(currentEnemy);
         }
 
-        // Play damage sound
+        // sounds
         if (audioSource != null && damageSound != null)
         {
             audioSource.PlayOneShot(damageSound);
         }
 
-        // Trigger shake effect if enabled
-        if (enableShakeEffect)
+        if (UI.enable_shake) // shake 
         {
-            StartCoroutine(Shake(currentPlayer.transform, 0.15f, 0.1f));
-            StartCoroutine(Shake(currentEnemy.transform, 0.2f, 0.15f));
+            StartCoroutine(UI.Shake(currentPlayer.transform, 0.15f, 0.1f));
+            StartCoroutine(UI.Shake(currentEnemy.transform, 0.2f, 0.15f));
         }
 
-        // Trigger damage particles if enabled
-        if (enableDamageParticles && damageEffectPrefab != null)
+        if (UI.enable_particles && UI.damage_effect != null)    // particles
         {
-            InstantiateDamageEffect(currentEnemy.transform.position);
+            UI.InstantiateDamageEffect(currentEnemy.transform.position);
         }
 
-        // Update enemy health UI
         UpdateEnemyUI();
-
         chosenAttack = true;
     }
 
+    // logic for enemy turn and attack
     private IEnumerator EnemyTurn()
     {
         Debug.Log($"{currentEnemy.enemyName}'s turn!");
@@ -238,15 +206,15 @@ public class GameManager : MonoBehaviour
         }
 
         // Trigger shake effect if enabled
-        if (enableShakeEffect)
+        if (UI.enable_shake)
         {
-            StartCoroutine(Shake(currentEnemy.transform, 0.15f, 0.1f));
-            StartCoroutine(Shake(targetPlayer.transform, 0.2f, 0.15f));
+            StartCoroutine(UI.Shake(currentEnemy.transform, 0.15f, 0.1f));
+            StartCoroutine(UI.Shake(targetPlayer.transform, 0.2f, 0.15f));
         }
 
         if (targetPlayer.health <= 0)
         {
-            Debug.Log($"{targetPlayer.playerName} has been defeated!");
+            Debug.Log($"{targetPlayer.player_name} has been defeated!");
             players.Remove(targetPlayer);
         }
 
@@ -254,43 +222,8 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1);
     }
 
-    private void InstantiateDamageEffect(Vector3 position)
-    {
-        if (!enableDamageParticles || damageEffectPrefab == null) return;
 
-        GameObject effect = Instantiate(damageEffectPrefab, position, Quaternion.identity);
-        ParticleSystem particleSystem = effect.GetComponent<ParticleSystem>();
-
-        if (particleSystem != null)
-        {
-            Destroy(effect, particleSystem.main.duration + particleSystem.main.startLifetime.constantMax);
-        }
-        else
-        {
-            Destroy(effect, 0.5f);
-        }
-    }
-
-    private IEnumerator Shake(Transform target, float duration, float magnitude)
-    {
-        if (!enableShakeEffect) yield break;
-
-        Vector3 originalPosition = target.localPosition;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            float xOffset = Random.Range(-1f, 1f) * magnitude;
-            float yOffset = Random.Range(-1f, 1f) * magnitude;
-
-            target.localPosition = new Vector3(originalPosition.x + xOffset, originalPosition.y + yOffset, originalPosition.z);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        target.localPosition = originalPosition;
-    }
-
+    // logic for ending and resetting the game
     private void EndGame()
     {
         Debug.Log("Game Over! Resetting game...");

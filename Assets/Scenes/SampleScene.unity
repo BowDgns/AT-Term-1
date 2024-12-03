@@ -5998,9 +5998,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36798e6747edcd54cb3b887aa64214f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: Marvin
+  player_name: Marving
   health: 120
-  healthText: {fileID: 1662365207}
+  health_text: {fileID: 1662365207}
 --- !u!212 &280116426
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7261,9 +7261,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36798e6747edcd54cb3b887aa64214f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: Bow
+  player_name: Bow
   health: 90
-  healthText: {fileID: 480349266}
+  health_text: {fileID: 480349266}
 --- !u!1 &419136028
 GameObject:
   m_ObjectHideFlags: 0
@@ -9727,9 +9727,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36798e6747edcd54cb3b887aa64214f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: Elyse
+  player_name: Elyse
   health: 140
-  healthText: {fileID: 460640630}
+  health_text: {fileID: 460640630}
 --- !u!1 &977589140
 GameObject:
   m_ObjectHideFlags: 0
@@ -10363,9 +10363,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36798e6747edcd54cb3b887aa64214f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: Aleks
+  player_name: Aleks
   health: 100
-  healthText: {fileID: 1984422620}
+  health_text: {fileID: 1984422620}
 --- !u!1 &1206462118
 GameObject:
   m_ObjectHideFlags: 0
@@ -14519,6 +14519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1987923805}
   - component: {fileID: 1987923804}
+  - component: {fileID: 1987923806}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -14538,6 +14539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57dea6833694a046af410f469bf88ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UI: {fileID: 0}
   players:
   - {fileID: 413712805}
   - {fileID: 280116425}
@@ -14559,13 +14561,6 @@ MonoBehaviour:
   enemyDefeatedSound: {fileID: 8300000, guid: 46c8e9fcb15a5424d80494c16075c02c, type: 3}
   damageSound: {fileID: 8300000, guid: 0c2fce69750f7c842962b3db0688d198, type: 3}
   audioSource: {fileID: 2140501507}
-  enemyName: {fileID: 288922408}
-  enemyHealth: {fileID: 484831099}
-  enableShakeEffect: 1
-  enableDamageParticles: 1
-  shakeEffectToggle: {fileID: 1924193739}
-  damageParticlesToggle: {fileID: 2130495366}
-  damageEffectPrefab: {fileID: 198308214}
 --- !u!4 &1987923805
 Transform:
   m_ObjectHideFlags: 0
@@ -14581,6 +14576,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1987923806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987923803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6670ad694d081345b5c3ade9ef4b030, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemy_name: {fileID: 288922408}
+  enemy_health: {fileID: 484831099}
+  enable_shake: 1
+  enable_particles: 1
+  shake_toggle: {fileID: 0}
+  particle_toggle: {fileID: 0}
+  damage_effect: {fileID: 198308214}
 --- !u!1 &2001206505
 GameObject:
   m_ObjectHideFlags: 0
