@@ -14554,10 +14554,10 @@ MonoBehaviour:
   - {fileID: 287151902}
   - {fileID: 1341580275}
   - {fileID: 977589143}
-  enemySpawnPoint: {fileID: 134468230}
-  currentEnemy: {fileID: 0}
-  attack1Button: {fileID: 903973684}
-  attack2Button: {fileID: 753248580}
+  enemy_spawn: {fileID: 134468230}
+  current_enemy: {fileID: 0}
+  attack_button: {fileID: 903973684}
+  special_button: {fileID: 753248580}
   enemyDefeatedSound: {fileID: 8300000, guid: 46c8e9fcb15a5424d80494c16075c02c, type: 3}
   damageSound: {fileID: 8300000, guid: 0c2fce69750f7c842962b3db0688d198, type: 3}
   audioSource: {fileID: 2140501507}

@@ -11,21 +11,22 @@ public class GameManager : MonoBehaviour
 
     public List<Player> players;
     public List<Enemy> enemies;
-    public GameObject enemySpawnPoint;
-    public Enemy currentEnemy;
+    public GameObject enemy_spawn;
+    public Enemy current_enemy;
 
-    public Button attack1Button;
-    public Button attack2Button;
+    public Button attack_button;
+    public Button special_button;
 
+    // AUDIO NEED TO FIX
     public AudioClip enemyDefeatedSound;
     public AudioClip damageSound;
     public AudioSource audioSource;
 
-    private int currentPlayerIndex = 0;
-    private bool chosenAttack = false;
+    private int current_player = 0;
+    private bool attacked = false;
 
-    private List<Enemy> originalEnemies; // Stores the initial list of enemies
-    private List<Player> originalPlayers; // Stores the initial list of players
+    private List<Enemy> original_enemies; 
+    private List<Player> original_players; 
 
     void Awake()
     {
@@ -33,15 +34,15 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        // Store original states of players and enemies
-        originalEnemies = new List<Enemy>(enemies);
-        originalPlayers = new List<Player>(players);
+        // get original state of player and enemys for resetting
+        original_enemies = new List<Enemy>(enemies);
+        original_players = new List<Player>(players);
 
-        attack1Button.gameObject.SetActive(false);
-        attack2Button.gameObject.SetActive(false);
+        attack_button.gameObject.SetActive(false);
+        special_button.gameObject.SetActive(false);
 
-        attack1Button.onClick.AddListener(() => PlayerAttack(1));
-        attack2Button.onClick.AddListener(() => PlayerAttack(2));
+        attack_button.onClick.AddListener(() => PlayerAttack(1));
+        special_button.onClick.AddListener(() => PlayerAttack(2));
 
         if (enemies.Count > 0)
         {
@@ -59,13 +60,10 @@ public class GameManager : MonoBehaviour
     {
         if (enemies.Count > 0)
         {
-            currentEnemy = Instantiate(enemies[0], enemySpawnPoint.transform.position, Quaternion.identity);
+            current_enemy = Instantiate(enemies[0], enemy_spawn.transform.position, Quaternion.identity);
             enemies.RemoveAt(0);
 
-            Debug.Log($"A new enemy has appeared: {currentEnemy.enemyName}");
-
-            // Update UI with enemy name and health
-            UpdateEnemyUI();
+            UpdateEnemyUI();    // update ui with new name and health
         }
         else
         {
@@ -76,10 +74,10 @@ public class GameManager : MonoBehaviour
 
     private void UpdateEnemyUI()
     {
-        if (currentEnemy != null)
+        if (current_enemy != null)
         {
-            UI.enemy_name.text = currentEnemy.enemyName;
-            UI.enemy_health.text = $"{currentEnemy.health}";
+            UI.enemy_name.text = current_enemy.enemyName;
+            UI.enemy_health.text = $"{current_enemy.health}";
         }
         else
         {
@@ -90,28 +88,28 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GameLoop()
     {
-        while (currentEnemy != null && players.Count > 0)
+        while (current_enemy != null && players.Count > 0)
         {
             for (int i = 0; i < players.Count; i++)
             {
-                currentPlayerIndex = i;
-                Player currentPlayer = players[currentPlayerIndex];
+                current_player = i;
+                Player currentPlayer = players[current_player];
                 yield return StartCoroutine(PlayerTurn(currentPlayer));
 
-                if (currentEnemy.health <= 0)
+                if (current_enemy.health <= 0)
                 {
-                    Debug.Log($"{currentEnemy.enemyName} has been defeated!");
+                    Debug.Log($"{current_enemy.enemyName} has been defeated!");
 
                     if (audioSource != null && enemyDefeatedSound != null)
                     {
                         audioSource.PlayOneShot(enemyDefeatedSound);
                     }
 
-                    Destroy(currentEnemy.gameObject);
+                    Destroy(current_enemy.gameObject);
                     yield return new WaitForSeconds(2);
                     SpawnNextEnemy();
 
-                    if (currentEnemy == null)
+                    if (current_enemy == null)
                     {
                         Debug.Log("Players win!");
                         EndGame();
@@ -120,7 +118,7 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            if (currentEnemy != null)
+            if (current_enemy != null)
             {
                 yield return StartCoroutine(EnemyTurn());
 
@@ -139,18 +137,18 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log($"{player.player_name}'s turn!");
 
-        attack1Button.gameObject.SetActive(true);
-        attack2Button.gameObject.SetActive(true);
+        attack_button.gameObject.SetActive(true);
+        special_button.gameObject.SetActive(true);
 
-        chosenAttack = false;
+        attacked = false;
 
-        while (!chosenAttack)
+        while (!attacked)
         {
             yield return null;
         }
 
-        attack1Button.gameObject.SetActive(false);
-        attack2Button.gameObject.SetActive(false);
+        attack_button.gameObject.SetActive(false);
+        special_button.gameObject.SetActive(false);
 
         Debug.Log($"{player.player_name}'s turn ended.");
         yield return new WaitForSeconds(1);
@@ -159,15 +157,15 @@ public class GameManager : MonoBehaviour
     // logic for player attack
     private void PlayerAttack(int attackType)
     {
-        Player currentPlayer = players[currentPlayerIndex];
+        Player currentPlayer = players[current_player];
 
         if (attackType == 1)
         {
-            currentPlayer.Attack1(currentEnemy);
+            currentPlayer.Attack1(current_enemy);
         }
         else if (attackType == 2)
         {
-            currentPlayer.Attack2(currentEnemy);
+            currentPlayer.Attack2(current_enemy);
         }
 
         // sounds
@@ -179,25 +177,25 @@ public class GameManager : MonoBehaviour
         if (UI.enable_shake) // shake 
         {
             StartCoroutine(UI.Shake(currentPlayer.transform, 0.15f, 0.1f));
-            StartCoroutine(UI.Shake(currentEnemy.transform, 0.2f, 0.15f));
+            StartCoroutine(UI.Shake(current_enemy.transform, 0.2f, 0.15f));
         }
 
         if (UI.enable_particles && UI.damage_effect != null)    // particles
         {
-            UI.InstantiateDamageEffect(currentEnemy.transform.position);
+            UI.InstantiateDamageEffect(current_enemy.transform.position);
         }
 
         UpdateEnemyUI();
-        chosenAttack = true;
+        attacked = true;
     }
 
     // logic for enemy turn and attack
     private IEnumerator EnemyTurn()
     {
-        Debug.Log($"{currentEnemy.enemyName}'s turn!");
+        Debug.Log($"{current_enemy.enemyName}'s turn!");
 
         Player targetPlayer = players[Random.Range(0, players.Count)];
-        currentEnemy.AttackPlayer(targetPlayer);
+        current_enemy.AttackPlayer(targetPlayer);
 
         // Play damage sound
         if (audioSource != null && damageSound != null)
@@ -208,7 +206,7 @@ public class GameManager : MonoBehaviour
         // Trigger shake effect if enabled
         if (UI.enable_shake)
         {
-            StartCoroutine(UI.Shake(currentEnemy.transform, 0.15f, 0.1f));
+            StartCoroutine(UI.Shake(current_enemy.transform, 0.15f, 0.1f));
             StartCoroutine(UI.Shake(targetPlayer.transform, 0.2f, 0.15f));
         }
 
@@ -218,7 +216,7 @@ public class GameManager : MonoBehaviour
             players.Remove(targetPlayer);
         }
 
-        Debug.Log($"{currentEnemy.enemyName}'s turn ended.");
+        Debug.Log($"{current_enemy.enemyName}'s turn ended.");
         yield return new WaitForSeconds(1);
     }
 
@@ -235,18 +233,17 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(3); // Optional delay before resetting
 
         // Reset players and enemies
-        players = new List<Player>(originalPlayers);
-        enemies = new List<Enemy>(originalEnemies);
+        players = new List<Player>(original_players);
+        enemies = new List<Enemy>(original_enemies);
 
         foreach (Player player in players)
         {
             player.ResetHealth(); // Ensure this method resets player health
         }
 
-        currentEnemy = null;
-        currentPlayerIndex = 0;
+        current_enemy = null;
+        current_player = 0;
 
-        // Restart game loop
         SpawnNextEnemy();
         StartCoroutine(GameLoop());
     }
