@@ -9,6 +9,9 @@ public class Player : MonoBehaviour
     public TMP_Text health_text;
     public TMP_Text damage_text;
 
+    public TextTime time;
+    private float text_time;
+
     public int min_damage = 10;
     public int max_damage = 20;
 
@@ -50,12 +53,15 @@ public class Player : MonoBehaviour
         UpdateHealth();
     }
 
+    private void Update()
+    {
+        text_time = time.text_time;
+        //Debug.Log(text_time);
+    }
+
     private IEnumerator ClearDamageText(Enemy enemy)
     {
-        // Wait for 2 seconds
-        yield return new WaitForSeconds(2f);
-
-        // Set the player's damage text to nothing
+        yield return new WaitForSeconds(text_time);
         enemy.damage_text.text = "";
     }
 }

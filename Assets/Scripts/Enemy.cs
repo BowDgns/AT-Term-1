@@ -13,6 +13,9 @@ public class Enemy : MonoBehaviour
 
     public TMP_Text damage_text;
 
+    public TextTime time;
+    private float text_time;
+
     public void TakeDamage(int damage)
     {
         health -= damage;
@@ -26,6 +29,7 @@ public class Enemy : MonoBehaviour
         player.health -= damage;
         Debug.Log($"{enemy_name} attacks {player.player_name} for {damage} damage! Player health left: {player.health}");
         player.UpdateHealth();
+        // play damage sound here
 
         player.damage_text.text = $"-{damage}";
 
@@ -35,9 +39,14 @@ public class Enemy : MonoBehaviour
     private IEnumerator ClearDamageText(Player player)
     {
         // Wait for 2 seconds
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(text_time);
 
         // Set the player's damage text to nothing
         player.damage_text.text = "";
+    }
+
+    private void Update()
+    {
+        text_time = time.text_time;
     }
 }
