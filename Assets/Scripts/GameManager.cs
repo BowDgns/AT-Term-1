@@ -138,7 +138,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator PlayerTurn(Player player)
     {
         player.player_highlight.SetActive(true);
-        Debug.Log($"{player.player_name}'s turn!");
+        Debug.Log($"{player.player_name} turn");
 
         attack_button.gameObject.SetActive(true);
         special_button.gameObject.SetActive(true);
@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour
         attack_button.gameObject.SetActive(false);
         special_button.gameObject.SetActive(false);
 
-        Debug.Log($"{player.player_name}'s turn ended.");
+        Debug.Log($"{player.player_name}s turn ended");
         yield return new WaitForSeconds(2);
         player.player_highlight.SetActive(false);
     }
@@ -197,7 +197,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator EnemyTurn()
     {
         enemy_highlight.SetActive(true);
-        Debug.Log($"{current_enemy.enemy_name}'s turn!");
+        Debug.Log($"{current_enemy.enemy_name} turn");
 
         Player targetPlayer = players[Random.Range(0, players.Count)];
         current_enemy.AttackPlayer(targetPlayer);
@@ -216,11 +216,11 @@ public class GameManager : MonoBehaviour
 
         if (targetPlayer.health <= 0)
         {
-            Debug.Log($"{targetPlayer.player_name} has been defeated!");
+            Debug.Log($"{targetPlayer.player_name} defeated");
             players.Remove(targetPlayer);
         }
 
-        Debug.Log($"{current_enemy.enemy_name}'s turn ended.");
+        Debug.Log($"{current_enemy.enemy_name} turn end");
         yield return new WaitForSeconds(2);
         enemy_highlight.SetActive(false);
     }
