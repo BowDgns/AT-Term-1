@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
     public Button attack_button;
     public Button special_button;
 
-    // AUDIO NEED TO FIX
     public AudioClip enemyDefeatedSound;
     public AudioClip damageSound;
     public AudioSource audioSource;

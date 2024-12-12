@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     public void Attack1(Enemy enemy)
     {
         int damage = Random.Range(min_damage, max_damage +1);
-        Debug.Log($"{player_name} used Attack1 on {enemy.name} for {damage} damage!");
+        Debug.Log($"{player_name} hit {enemy.name} for {damage} damage");
         enemy.TakeDamage(damage);
 
         enemy.damage_text.text = $"-{damage}";
@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
     public void Attack2(Enemy enemy)
     {
         int damage = Random.Range(min_damage, max_damage + 1);
-        Debug.Log($"{player_name} used Attack2 on {enemy.name} for {damage} damage!");
+        Debug.Log($"{player_name} hit {enemy.name} for {damage} damage");
         enemy.TakeDamage(damage);
 
         enemy.damage_text.text = $"-{damage}";

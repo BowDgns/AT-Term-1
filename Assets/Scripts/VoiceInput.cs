@@ -31,12 +31,21 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
             toggle_dictionary[toggle_words[i]] = toggles[i];
         }
 
+        List<string> all_keywords = new List<string>();
+        all_keywords.AddRange(button_words);
+        all_keywords.AddRange(toggle_words);
+
+        keyword_recognizer = new KeywordRecognizer(all_keywords.ToArray());
+        keyword_recognizer.OnPhraseRecognized += OnPhraseRecognized;
+
         if (voice_toggle != null)
         {
             voice_toggle.onValueChanged.AddListener(OnVoiceControlToggleChanged);
         }
+
         if (voice_toggle != null && voice_toggle.isOn)
         {
+            Debug.Log("voice on");
             keyword_recognizer.Start();
         }
     }
@@ -45,15 +54,15 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
     {
         if (isOn)
         {
-            Debug.Log("Voice control enabled");
             if (!keyword_recognizer.IsRunning)
             {
+                Debug.Log("voice on");
                 keyword_recognizer.Start();
             }
         }
         else
         {
-            Debug.Log("Voice control disabled");
+            Debug.Log("voice off");
             if (keyword_recognizer.IsRunning)
             {
                 keyword_recognizer.Stop();
@@ -71,10 +80,6 @@ public class MultiButtonToggleVoiceControl : MonoBehaviour
         else if (toggle_dictionary.TryGetValue(args.text, out Toggle toggle))
         {
             toggle.isOn = !toggle.isOn;
-        }
-        else
-        {
-            Debug.LogWarning($"'{args.text}' not in the list");
         }
     }
 

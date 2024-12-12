@@ -11888,7 +11888,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: f827533df3a17ca4e9c7333534a67a17, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.218
+  m_Volume: 0.044
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -12323,9 +12323,36 @@ MonoBehaviour:
   - {fileID: 1788881199}
   - {fileID: 2034119259}
   - {fileID: 1344321295}
-  button_words: []
-  toggles: []
-  toggle_words: []
+  - {fileID: 1466105322}
+  - {fileID: 919651701}
+  - {fileID: 1973509923}
+  - {fileID: 636621126}
+  button_words:
+  - start
+  - settings
+  - attack
+  - special
+  - exit
+  - back
+  - volume
+  - controls
+  - video
+  - menu
+  - quit
+  - options
+  - play
+  toggles:
+  - {fileID: 1574162357}
+  - {fileID: 362639935}
+  - {fileID: 2130495366}
+  - {fileID: 1924193739}
+  - {fileID: 1486088995}
+  toggle_words:
+  - voice
+  - dyslexic font
+  - particles
+  - shake
+  - highlight
 --- !u!4 &1222987985
 Transform:
   m_ObjectHideFlags: 0
@@ -12574,7 +12601,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.162
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -12687,7 +12714,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 3fd3c2ead0294f04b8b1ec63ea471b82, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.189
+  m_Volume: 0.057
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -14820,7 +14847,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_IsOn: 0
+  m_IsOn: 1
 --- !u!1 &1576369630
 GameObject:
   m_ObjectHideFlags: 0
@@ -17394,7 +17421,7 @@ GameObject:
   - component: {fileID: 1973509924}
   - component: {fileID: 1973509923}
   m_Layer: 5
-  m_Name: Settings
+  m_Name: options_button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18994,7 +19021,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.499
+  m_Volume: 0.024
   m_Pitch: 1
   Loop: 0
   Mute: 0
